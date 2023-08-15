@@ -1,26 +1,27 @@
 package main
 
 import (
-	"socks5"
-	"net"
 	"container/list"
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"net"
 	"regexp"
+
+	"github.com/oov/socks5"
 )
 
 type Users struct {
-	User		string `json:"user"`
-	Pass		string `json:"pass"`
+	User string `json:"user"`
+	Pass string `json:"pass"`
 }
 
 type Config struct {
-	Sock5Addr	string `json:"addr"`
-	UserList	[]Users `json:"userlist"`
-	Pattern		[]string `json:"pattern"`
-	BlockPattern	[]string `json:"blockpattern"`
-	IPAllow		[]string `json:"ipallow"`
+	Sock5Addr    string   `json:"addr"`
+	UserList     []Users  `json:"userlist"`
+	Pattern      []string `json:"pattern"`
+	BlockPattern []string `json:"blockpattern"`
+	IPAllow      []string `json:"ipallow"`
 }
 
 func (c *Config) String() string {
@@ -45,23 +46,22 @@ func main() {
 	if err != nil {
 		log.Println("load configuration failed, err:", err)
 		return
-        }
+	}
 
-	// Build pre-compiled pattern matching list	
+	// Build pre-compiled pattern matching list
 	patterns := list.New()
 	for _, pattern := range conf.Pattern {
 		r, _ := regexp.Compile(pattern)
 		patterns.PushBack(r)
 	}
 
-	// Build pre-compiled blocking pattern matching list	
+	// Build pre-compiled blocking pattern matching list
 	blockpatterns := list.New()
 	for _, blockpattern := range conf.BlockPattern {
 		r, _ := regexp.Compile(blockpattern)
 		blockpatterns.PushBack(r)
 	}
 
-	
 	// Build user list map
 	users := map[string]string{}
 	for _, uid := range conf.UserList {
@@ -80,23 +80,23 @@ func main() {
 
 	srv := socks5.New()
 
-	srv.AuthNoAuthenticationRequiredCallback = func(c *socks5.Conn) error {
-		ip, _, err := net.SplitHostPort(c.RemoteAddr())
-		if err != nil {
-			log.Fatal(err)
-		}
-		pip := net.ParseIP(ip)
+	// srv.AuthNoAuthenticationRequiredCallback = func(c *socks5.Conn) error {
+	// 	ip, _, err := net.SplitHostPort(c.RemoteAddr())
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	pip := net.ParseIP(ip)
 
-		for e := ipmasks.Front(); e != nil; e = e.Next() {
-			snet := e.Value.(*net.IPNet)
-			if snet.Contains(pip) {
-				log.Printf("IP OK: '%v'", ip)
-				return nil
-			}
-		}
-		log.Printf("Not allowed IP: '%v'", ip)
-		return socks5.ErrAuthenticationFailed
-	}
+	// 	for e := ipmasks.Front(); e != nil; e = e.Next() {
+	// 		snet := e.Value.(*net.IPNet)
+	// 		if snet.Contains(pip) {
+	// 			log.Printf("IP OK: '%v'", ip)
+	// 			return nil
+	// 		}
+	// 	}
+	// 	log.Printf("Not allowed IP: '%v'", ip)
+	// 	return socks5.ErrAuthenticationFailed
+	// }
 
 	srv.AuthUsernamePasswordCallback = func(c *socks5.Conn, username, password []byte) error {
 		if len(users) == 0 {
@@ -122,6 +122,7 @@ func main() {
 	srv.HandleConnectFunc(func(c *socks5.Conn, host string) (newHost string, err error) {
 		for e := patterns.Front(); e != nil; e = e.Next() {
 			pattern := e.Value.(*regexp.Regexp)
+			print("\n\n", host, "\n\n")
 			if pattern.MatchString(host) {
 				if user, ok := c.Data.(string); ok {
 					log.Printf("%v connecting to %v", user, host)
