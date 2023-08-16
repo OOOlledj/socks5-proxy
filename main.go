@@ -120,26 +120,29 @@ func main() {
 	}
 
 	srv.HandleConnectFunc(func(c *socks5.Conn, host string) (newHost string, err error) {
-		for e := patterns.Front(); e != nil; e = e.Next() {
-			pattern := e.Value.(*regexp.Regexp)
-			print("\n\n", host, "\n\n")
-			if pattern.MatchString(host) {
-				if user, ok := c.Data.(string); ok {
-					log.Printf("%v connecting to %v", user, host)
-				}
-				log.Printf("Alowed host: %v", host)
-				return host, nil
-			}
-		}
+		// scroll patterns
+		for p := patterns.Front(); p != nil; p = p.Next() {
+			pattern := p.Value.(*regexp.Regexp)
 
-		for e := blockpatterns.Front(); e != nil; e = e.Next() {
-			blockpattern := e.Value.(*regexp.Regexp)
-			if blockpattern.MatchString(host) {
-				log.Printf("Not Alowed host: %v", host)
-				return host, socks5.ErrConnectionNotAllowedByRuleset
+			//scroll blockpatterns
+			for bp := blockpatterns.Front(); bp != nil; bp = bp.Next() {
+				blockpattern := bp.Value.(*regexp.Regexp)
+
+				// check for matching blockpatterns
+				if blockpattern.MatchString(host) {
+					log.Printf("Not Alowed host: %v", host)
+					return host, socks5.ErrConnectionNotAllowedByRuleset
+					// check for matching allowed
+				} else if pattern.MatchString(host) {
+					if user, ok := c.Data.(string); ok {
+						log.Printf("%v connecting to %v", user, host)
+					}
+					log.Printf("Alowed host: %v", host)
+					return host, nil
+				}
 			}
 		}
-		log.Printf("Not Alowed host(DEFAULT): %v", host)
+		log.Printf("Not Alowed host (DEFAULT): %v", host)
 		return host, socks5.ErrConnectionNotAllowedByRuleset
 	})
 
