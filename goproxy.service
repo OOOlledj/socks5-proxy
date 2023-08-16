@@ -1,0 +1,14 @@
+[Unit]
+Description=Golang proxy server: https://github.com/OOOlledj/socks5-proxy
+After=network.target
+
+[Service]
+Type=notify
+
+WorkingDirectory=/home/ooolledj/socks5-proxy/
+ExecStart=/home/ooolledj/socks5-proxy/socks5
+ExecReload=/home/ooolledj/socks5-proxy/socks5
+Restart=always
+
+[Install]
+WantedBy=default.target
