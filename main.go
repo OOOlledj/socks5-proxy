@@ -154,5 +154,8 @@ func main() {
 		}
 	})
 
-	srv.ListenAndServe(conf.Sock5Addr)
+	err = srv.ListenAndServe(conf.Sock5Addr)
+	if err != nil {
+		log.Printf("Error listening address %v: %v", conf.Sock5Addr, err)
+	}
 }
