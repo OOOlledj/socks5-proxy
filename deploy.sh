@@ -15,5 +15,3 @@ docker-compose up -d --build goproxy
 systemctl daemon-reload
 systemctl start goproxy.service
 systemctl status goproxy.service
-
-
