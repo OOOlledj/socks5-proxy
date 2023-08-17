@@ -6,8 +6,8 @@ Requires=docker.service
 [Service]
 Type=simple
 WorkingDirectory=/home/ooolledj/socks5-proxy
-ExecStart=/usr/bin/docker run --rm --name go-proxy -p 12345:12345 goproxy:local
-ExecStop=/usr/bin/docker container stop -t 1 go-proxy
+ExecStart=/usr/bin/docker run --rm --name goproxy -p 12345:12345 goproxy:local
+ExecStop=/usr/bin/docker container stop -t 1 goproxy
 Restart=on-failure
 TimeoutStartSec=10
 
