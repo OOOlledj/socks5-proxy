@@ -1,13 +1,15 @@
 [Unit]
-Description=Golang proxy server: https://github.com/OOOlledj/socks5-proxy
-After=network.target
+Description=Golang proxy server in Docker: https://github.com/OOOlledj/socks5-proxy
+After=network.target docker.service
+Requires=docker.service
 
 [Service]
 Type=simple
-WorkingDirectory=/home/ooolledj/socks5-proxy/
-ExecStart=/home/ooolledj/socks5-proxy/socks5
-ExecReload=/home/ooolledj/socks5-proxy/socks5
-Restart=on-failure
+WorkingDirectory=/home/ooolledj/Documents/Проекты Golang/socks5-proxy
+ExecStart=/usr/bin/docker run --rm --name go-proxy -p 12345:12345 goproxy:local
+ExecStop=/usr/bin/docker stop -t 1 go-proxy
+Restart=always
+TimeoutStartSec=5
 
 [Install]
 WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+version: '3'
+
+networks:
+    internal:
+
+services:
+    go:
+        build:
+          context: ./
+          dockerfile: Dockerfile
+        container_name: go-proxy
+        volumes:
+          - ./config:/app/config
+        ports:
+          - "12345:12345"
+        networks:
+          - internal

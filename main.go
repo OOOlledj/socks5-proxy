@@ -42,7 +42,7 @@ func LoadConfig(s string) (*Config, error) {
 }
 
 func main() {
-	conf, err := LoadConfig("socks5-proxy.config")
+	conf, err := LoadConfig("config/socks5-proxy.config")
 	if err != nil {
 		log.Println("load configuration failed, err:", err)
 		return
