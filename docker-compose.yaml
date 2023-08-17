@@ -4,7 +4,7 @@ networks:
     internal:
 
 services:
-    go:
+    goproxy:
         build:
           context: ./
           dockerfile: Dockerfile

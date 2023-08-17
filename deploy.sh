@@ -8,7 +8,8 @@ pwd
 cp goproxy.service /etc/systemd/system/
 
 # build image with proxy (don't forget Dockerfile)
-docker build --tag 'goproxy:local' .
+docker-compose down
+docker-compose up -d --build goproxy
 
 # run and check service
 systemctl daemon-reload
