@@ -133,15 +133,17 @@ func main() {
 					log.Printf("Not Alowed host: %v", host)
 					return host, socks5.ErrConnectionNotAllowedByRuleset
 					// check for matching allowed
-				} else if pattern.MatchString(host) {
-					if user, ok := c.Data.(string); ok {
-						log.Printf("%v connecting to %v", user, host)
-					}
-					log.Printf("Alowed host: %v", host)
-					return host, nil
 				}
 			}
+			if pattern.MatchString(host) {
+				if user, ok := c.Data.(string); ok {
+					log.Printf("%v connecting to %v", user, host)
+				}
+				log.Printf("Alowed host: %v", host)
+				return host, nil
+			}
 		}
+		// In theory this code never reaches
 		log.Printf("Not Alowed host (DEFAULT): %v", host)
 		return host, socks5.ErrConnectionNotAllowedByRuleset
 	})
