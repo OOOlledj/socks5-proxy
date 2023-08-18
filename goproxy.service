@@ -5,7 +5,7 @@ Requires=docker.service
 
 [Service]
 Type=simple
-WorkingDirectory=/home/ooolledj/Documents/Проекты Golang/socks5-proxy
+WorkingDirectory=/home/ooolledj/socks5-proxy
 ExecStartPre=docker container rm goproxy --force
 ExecStart=docker run --name goproxy -p 12345:12345 goproxy:local
 ExecStop=docker container stop goproxy

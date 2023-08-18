@@ -14,4 +14,5 @@ docker-compose build
 # run and check service
 systemctl daemon-reload
 systemctl start goproxy.service
+sleep 3
 systemctl status goproxy.service
