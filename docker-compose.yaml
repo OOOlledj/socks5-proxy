@@ -5,6 +5,7 @@ networks:
 
 services:
     goproxy:
+        image: goproxy:local
         build:
           context: ./
           dockerfile: Dockerfile

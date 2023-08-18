@@ -1,5 +1,4 @@
 config/socks5-proxy.config
 go.sum
-go.mod
 go.work*
-socks5
+goproxy

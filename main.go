@@ -3,12 +3,14 @@ package main
 import (
 	"container/list"
 	"encoding/json"
+	"goproxy/socks5"
 	"io/ioutil"
 	"log"
 	"net"
+	"os"
+	"os/signal"
 	"regexp"
-
-	"github.com/oov/socks5"
+	"syscall"
 )
 
 type Users struct {
@@ -42,6 +44,19 @@ func LoadConfig(s string) (*Config, error) {
 }
 
 func main() {
+
+	sigc := make(chan os.Signal, 1)
+	signal.Notify(sigc,
+		syscall.SIGHUP,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+		syscall.SIGQUIT)
+	go func() {
+		_ = <-sigc
+		os.Exit(0)
+		// ... do something ...
+	}()
+
 	conf, err := LoadConfig("config/socks5-proxy.config")
 	if err != nil {
 		log.Println("load configuration failed, err:", err)
